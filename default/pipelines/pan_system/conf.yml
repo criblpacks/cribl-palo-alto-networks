@@ -1,0 +1,149 @@
+output: default
+groups:
+  RARnbB:
+    name: Suppress Duplicate Events
+    disabled: true
+    index: 4
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        This pipeline will process PAN System logs.
+
+
+        There are multiple functions in this pipeline:
+
+        #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
+
+        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #4. Reshape the events using the parser to remove unnecessary fields
+
+        #5-6. Suppress duplicate system event messages
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: _raw.match(/[A-Z][a-z]{2}\s\d+\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+            || host
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
+        - name: sourcetype
+          value: "'pan:system'"
+        - name: source
+          value: source || 'pan:syslog'
+        - name: index
+          value: index || 'pan_logs'
+      keep:
+        - _raw
+        - host
+        - index
+        - source
+        - sourcetype
+        - _time
+      remove:
+        - "*"
+    description: Set fields to correct values and remove the remainder. Cleanup the _raw
+      field by removing the syslog header.
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+    description: Use the correct "generated time" as the timestamp for the event.
+  - id: serde
+    filter: "true"
+    disabled: false
+    conf:
+      mode: reserialize
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - log_subtype
+        - version
+        - generated_time
+        - vsys
+        - event_id
+        - object
+        - future_use3
+        - future_use4
+        - module
+        - severity
+        - description
+        - sequence_number
+        - action_flags
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+      remove:
+        - future_use*
+        - receive_time
+        - generated_time
+  - id: serde
+    filter: "true"
+    disabled: true
+    conf:
+      mode: extract
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - log_subtype
+        - version
+        - generated_time
+        - vsys
+        - event_id
+        - object
+        - future_use3
+        - future_use4
+        - module
+        - severity
+        - description
+        - sequence_number
+        - action_flags
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+      dstField: __temp
+    groupId: RARnbB
+  - id: suppress
+    filter: "true"
+    disabled: true
+    conf:
+      allow: 1
+      suppressPeriodSec: 300
+      dropEventsMode: true
+      maxCacheSize: 50000
+      cacheIdleTimeoutPeriods: 2
+      numEventsIdleTimeoutTrigger: 10000
+      keyExpr: "`${__temp.event_id} ${__temp.description}`"
+    groupId: RARnbB

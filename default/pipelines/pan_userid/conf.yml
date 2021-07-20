@@ -1,0 +1,99 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        This pipeline will process PAN User ID logs.
+
+
+        There are multiple functions in this pipeline:
+
+        #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
+
+        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #4. Reshape the events using the parser to remove unnecessary fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - value: _raw.match(/[A-Z][a-z]{2}\s\d+\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+          name: host
+        - name: sourcetype
+          value: "'pan:userid'"
+        - name: source
+          value: source || 'pan:syslog'
+        - name: index
+          value: index || 'pan_logs'
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
+      keep:
+        - _raw
+        - _time
+        - index
+        - host
+        - source
+        - sourcetype
+      remove:
+        - "*"
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: reserialize
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - log_subtype
+        - version
+        - generated_time
+        - vsys
+        - src_ip
+        - source_name
+        - event_id
+        - repeat_count
+        - timeout_threshold
+        - src_port
+        - dest_port
+        - source
+        - source_type
+        - sequence_number
+        - action_flags
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+        - vsys_id
+        - factor_type
+        - factor_completion_time
+        - factor_number
+      remove:
+        - future_use*
+        - "*_time"

@@ -1,0 +1,31 @@
+QQERZg:
+  sampleName: pan_config.log
+  created: 1626800332898
+  size: 418
+  numEvents: 1
+6rAgpv:
+  sampleName: pan_system.log
+  created: 1626802111677
+  size: 2195
+  numEvents: 4
+  modified: 1626802111670.5747
+Gq5Bjl:
+  sampleName: pan_traffic.log
+  created: 1626804625570
+  size: 4197
+  numEvents: 4
+61hEQ9:
+  sampleName: pan_globalprotect.log
+  created: 1626806020811
+  size: 708
+  numEvents: 1
+dkSNsf:
+  sampleName: pan_hipmatch.log
+  created: 1626806421892
+  size: 542
+  numEvents: 1
+zU8yWr:
+  sampleName: pan_threat.log
+  created: 1626806657410
+  size: 1032
+  numEvents: 1

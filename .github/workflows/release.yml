@@ -1,0 +1,19 @@
+name: Main
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: tar -czf /tmp/${{ github.event.repository.name }}.crbl .
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: /tmp/${{ github.event.repository.name }}.crbl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

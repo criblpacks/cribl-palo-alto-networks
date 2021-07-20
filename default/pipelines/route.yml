@@ -1,0 +1,84 @@
+id: default
+groups: {}
+routes:
+  - id: 5zON3d
+    name: Traffic
+    final: true
+    disabled: false
+    pipeline: pan_traffic
+    description: ""
+    clones: []
+    filter: /,TRAFFIC,/.test(_raw)
+    output: default
+  - id: bSiAu8
+    name: Threat
+    final: true
+    disabled: false
+    pipeline: pan_threat
+    description: ""
+    clones: []
+    filter: /,THREAT,/.test(_raw)
+    output: default
+  - id: moPEY8
+    name: System
+    final: true
+    disabled: false
+    pipeline: pan_system
+    description: ""
+    clones: []
+    filter: /,SYSTEM,/.test(_raw)
+    output: default
+  - id: Ax1zbB
+    name: Config
+    final: true
+    disabled: false
+    pipeline: pan_config
+    description: ""
+    clones: []
+    filter: /,CONFIG,/.test(_raw)
+    output: default
+  - id: Ekpmod
+    name: HIP Match
+    final: true
+    disabled: false
+    pipeline: pan_hipmatch
+    description: ""
+    clones: []
+    filter: /,HIPMATCH,/.test(_raw)
+    output: default
+  - id: vycWVl
+    name: User ID
+    final: true
+    disabled: false
+    pipeline: pan_userid
+    description: ""
+    clones: []
+    filter: /,USERID,/.test(_raw)
+    output: default
+  - id: vhGy6p
+    name: GlobalProtect
+    final: true
+    disabled: false
+    pipeline: pan_globalprotect
+    description: ""
+    clones: []
+    filter: /,GLOBALPROTECT,/.test(_raw)
+    output: default
+  - id: QGwqXS
+    name: Decryption
+    final: true
+    disabled: false
+    pipeline: pan_decryption
+    description: ""
+    clones: []
+    filter: /,DECRYPTION,/.test(_raw)
+    output: default
+  - id: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: devnull
+    description: Blackhole unknown log types
+    clones: []
+    filter: "true"
+    output: default

@@ -1,0 +1,147 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        This pipeline will process PAN Threat logs.
+
+
+        There are multiple functions in this pipeline:
+
+        #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
+
+        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #4. Reshape the events using the parser to remove unnecessary fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: _raw.match(/[A-Z][a-z]{2}\s\d+\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+            || host
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
+        - name: sourcetype
+          value: "'pan:threat'"
+        - name: source
+          value: source || 'pan:syslog'
+        - name: index
+          value: index || 'pan_logs'
+      remove:
+        - "*"
+      keep:
+        - _raw
+        - host
+        - index
+        - source
+        - sourcetype
+        - _time
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+  - id: serde
+    filter: "true"
+    disabled: false
+    conf:
+      mode: reserialize
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - log_subtype
+        - version
+        - generated_time
+        - src_ip
+        - dest_ip
+        - src_translated_ip
+        - dest_translated_ip
+        - rule
+        - src_user
+        - dest_user
+        - app
+        - vsys
+        - src_zone
+        - dest_zone
+        - src_interface
+        - dest_interface
+        - log_forwarding_profile
+        - future_use3
+        - session_id
+        - repeat_count
+        - src_port
+        - dest_port
+        - src_translated_port
+        - dest_translated_port
+        - session_flags
+        - transport
+        - action
+        - misc
+        - threat
+        - raw_category
+        - severity
+        - direction
+        - sequence_number
+        - action_flags
+        - src_location
+        - dest_location
+        - future_use4
+        - content_type
+        - pcap_id
+        - file_hash
+        - cloud_address
+        - url_index
+        - user_agent
+        - file_type
+        - xff
+        - referrer
+        - sender
+        - subject
+        - recipient
+        - report_id
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+        - future_use5
+        - src_vm
+        - dest_vm
+        - http_method
+        - tunnel_id
+        - tunnel_monitor_tag
+        - tunnel_session_id
+        - tunnel_start_time
+        - tunnel_type
+        - threat_category
+        - content_version
+      keep: []
+      remove:
+        - receive_time
+        - generated_time
+        - src_location
+        - dest_location
+        - future_use*
+        - sequence_number

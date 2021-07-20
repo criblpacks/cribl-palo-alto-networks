@@ -1,0 +1,120 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        This pipeline will process PAN GlobalProtect logs.
+
+
+        There are multiple functions in this pipeline:
+
+        #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
+
+        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #4. Reshape the events using the parser to remove unnecessary fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: _raw.match(/[A-Z][a-z]{2}\s\d+\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+        - value: "'pan:globalprotect'"
+          name: sourcetype
+        - name: source
+          value: source || 'pan:syslog'
+        - name: index
+          value: index || 'pan_logs'
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
+      keep:
+        - _raw
+        - _time
+        - index
+        - host
+        - source
+        - sourcetype
+      remove:
+        - "*"
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: extract
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - future_use2
+        - version
+        - time_generated
+        - vsys
+        - event_id
+        - stage
+        - auth_method
+        - tunnel_type
+        - src_user
+        - src_region
+        - machine_name
+        - public_ip
+        - public_ipv6
+        - private_ip
+        - private_ipv6
+        - host_id
+        - serial_number
+        - client_ver
+        - client_os
+        - client_os_ver
+        - repeat_count
+        - reason
+        - error
+        - opaque
+        - status
+        - location
+        - login_duration
+        - connect_method
+        - error_code
+        - portal
+        - sequence_number
+        - action_flags
+        - event_time
+        - selection_type
+        - response_time
+        - priority
+        - attempted_gateways
+        - gateway
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+        - vsys_id
+      remove:
+        - future_use*
+        - "*_time"
+        - time_generated
