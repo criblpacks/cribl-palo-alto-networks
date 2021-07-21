@@ -10,7 +10,7 @@ You should expect to see 15-30% reduction in the size of your Palo Alto Firewall
 
 ## Installation
 ---
-1. Download the most recent .crbl file from the repo [releases page](https://github.com/criblpacks/palo-alto-networks/releases).
+1. Download the most recent .crbl file from the repo [releases page](https://github.com/criblpacks/cribl-palo-alto-networks/releases).
 2. Create a Route with with a filter for your Palo Alto Firewall events. A sample filter to match all events:
 ```
 (sourcetype=='pan:log' || sourcetype=='pan_log' || /^[^,]+,[^,]+,[^,]+,(THREAT|TRAFFIC|SYSTEM|CONFIG|HIPMATCH|CORRELATION|USERID|GLOBALPROTECT),/.test(_raw))
@@ -20,6 +20,9 @@ You should expect to see 15-30% reduction in the size of your Palo Alto Firewall
 
 ## Release Notes
 ---
+### Version 0.5.1 - 2021-07-21
+Fixes README
+
 ### Version 0.5.0 - 2021-07-20
 Initial release
 
