@@ -17,7 +17,7 @@ jobs:
       - name: Pack it up!
         run: tar -czf /tmp/${{ github.event.repository.name }}-${{ env.GITHUB_SHA_SHORT }}-${{ env.GITHUB_REF_SLUG_CS }}.crbl *
 
-     - name: Release
+      - name: Release
         if: ${{ success() }}
         id: release
         uses: softprops/action-gh-release@master
