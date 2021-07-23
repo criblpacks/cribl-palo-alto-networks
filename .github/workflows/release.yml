@@ -1,19 +1,66 @@
-name: Main
-
-on: push
-
+name: Build Release
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-[RT]C[0-9]+'
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build
-        run: tar -czf /tmp/${{ github.event.repository.name }}.crbl .
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+
+      - name: Get GitHub slug info
+        uses: rlespinasse/github-slug-action@3.5.1
+
+      - name: Pack it up!
+        run: tar -czf /tmp/${{ github.event.repository.name }}-${{ env.GITHUB_SHA_SHORT }}-${{ env.GITHUB_REF_SLUG_CS }}.crbl *
+
+     - name: Release
+        if: ${{ success() }}
+        id: release
+        uses: softprops/action-gh-release@master
         with:
-          files: /tmp/${{ github.event.repository.name }}.crbl
+          prerelease: ${{ contains(github.ref, 'RC') || contains(github.ref, 'TC') }}
+          files: /tmp/${{ github.event.repository.name }}-${{ env.GITHUB_SHA_SHORT }}-${{ env.GITHUB_REF_SLUG_CS }}.crbl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get release info
+        if: ${{ success() }}
+        id: release_info
+        uses: cardinalby/git-get-release-action@1.1.1
+        with:
+          releaseId: "${{ steps.release.outputs.id }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract timestamp
+        if: ${{ success() }}
+        run: |
+          echo "TIMESTAMP=$(date +%s -d "${{ steps.release_info.outputs.published_at }}")" >> $GITHUB_ENV
+
+      - name: Slack notification (production releases only)
+        if: ${{ success() && steps.release_info.outputs.prerelease == 'false' }}
+        id: slack
+        uses: wearerequired/slack-messaging-action@v1
+        with:
+          bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          payload: >-
+            {
+              "attachments": [
+                {
+                  "fallback": "${{ github.event.repository.name }} has been updated.",
+                  "color": "#00cccc",
+                  "pretext": "A new release for ${{ github.event.repository.name }} was published on Github!",
+                  "title": "${{ github.event.repository.name }} - ${{ steps.release_info.outputs.tag_name }}",
+                  "title_link": "${{ steps.release_info.outputs.html_url }}",
+                  "text": ${{ toJSON(steps.release_info.outputs.body) }},
+                  "footer": "PackBot",
+                  "footer_icon": "https://cribl.io/favicon.ico",
+                  "ts": ${{ env.TIMESTAMP }}
+                }
+              ]
+            }
