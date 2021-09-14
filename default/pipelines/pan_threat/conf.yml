@@ -42,6 +42,24 @@ functions:
         - source
         - sourcetype
         - _time
+  - id: lookup
+    filter: "true"
+    disabled: null
+    conf:
+      matchMode: regex
+      matchType: specific
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: device_info.csv
+      outFields:
+        - lookupField: tz
+          eventField: __tz
+    description: Add time zone offset as an internal field to the event. Uses the host
+      field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -49,7 +67,8 @@ functions:
       srcField: _raw
       dstField: _time
       defaultTimezone: utc
-      timeExpression: time.getTime() / 1000
+      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) : (time.getTime() /
+        1000)"
       offset: 0
       maxLen: 150
       defaultTime: now
@@ -58,6 +77,7 @@ functions:
       timestamps:
         - regex: /^(?:[^,]*,){6}([^,]+)/
           strptime: "%Y/%m/%d %H:%M:%S"
+    description: Use the correct "generated time" as the timestamp for the event.
   - id: serde
     filter: "true"
     disabled: false

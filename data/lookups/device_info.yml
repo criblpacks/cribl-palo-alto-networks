@@ -1,0 +1,4 @@
+size: 7
+description: "Provides time zone information based on host configuration. Time zones should
+  be specified in this format: -05, +11, etc."
+rows: 0
