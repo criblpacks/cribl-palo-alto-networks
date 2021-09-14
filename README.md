@@ -18,8 +18,27 @@ You should expect to see 15-30% reduction in the size of your Palo Alto Firewall
 3. Select the `PAN` pack as the pipeline.
 4. Configure the pack pipelines with the appropriate index for your Palo Alto logs. By default the index field will be set to `pan_logs`.
 
+### Configure Device Information
+This pack assumes all of your firewalls use UTC/GMT for their time zone configuration. If you use local time zones, please configure the `device_info.csv` lookup file (located in the pack's Knowledge content).
+
+The `device_info.csv` file uses a regular expression lookup function in each pipeline. You can use wildcards (e.g. `.*`, `KCMO-FW-\d+`, `FW-.*`) in the hostname field. The time zone (`tz`) field must be formatted as an integer (e.g. -05, +11, etc.). The regex lookup will return the most specific regex as the time zone value.
+
+Here is an example lookup file:
+```
+host,tz
+KCMO-FW-\d+,-05
+FW-.*,+01
+.*,-04
+```
+
 ## Release Notes
 ---
+### Version 0.6.0 - 2021-09-14
+Adds `device_info.csv` lookup file and lookup function in pipelines to adjust time zones per firewall.
+
+### Version 0.5.2 - 2021-08-12
+Adds pack display name for LogStream v3.1
+
 ### Version 0.5.1 - 2021-07-21
 Fixes README
 
