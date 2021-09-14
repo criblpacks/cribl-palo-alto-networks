@@ -3,7 +3,7 @@ groups:
   RARnbB:
     name: Suppress Duplicate Events
     disabled: true
-    index: 4
+    index: 5
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -50,6 +50,24 @@ functions:
         - "*"
     description: Set fields to correct values and remove the remainder. Cleanup the _raw
       field by removing the syslog header.
+  - id: lookup
+    filter: "true"
+    disabled: null
+    conf:
+      matchMode: regex
+      matchType: specific
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: device_info.csv
+      outFields:
+        - lookupField: tz
+          eventField: __tz
+    description: Add time zone offset as an internal field to the event. Uses the host
+      field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -57,7 +75,8 @@ functions:
       srcField: _raw
       dstField: _time
       defaultTimezone: utc
-      timeExpression: time.getTime() / 1000
+      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) : (time.getTime() /
+        1000)"
       offset: 0
       maxLen: 150
       defaultTime: now
