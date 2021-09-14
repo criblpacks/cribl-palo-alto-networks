@@ -81,7 +81,7 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      mode: extract
+      mode: reserialize
       type: csv
       srcField: _raw
       fields:
