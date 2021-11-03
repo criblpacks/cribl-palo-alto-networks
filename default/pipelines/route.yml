@@ -8,7 +8,7 @@ routes:
     pipeline: pan_traffic
     description: ""
     clones: []
-    filter: /,TRAFFIC,/.test(_raw)
+    filter: _raw.indexOf(",TRAFFIC,") > -1
     output: default
   - id: bSiAu8
     name: Threat
@@ -17,7 +17,7 @@ routes:
     pipeline: pan_threat
     description: ""
     clones: []
-    filter: /,THREAT,/.test(_raw)
+    filter: _raw.indexOf(",THREAT,") > -1
     output: default
   - id: moPEY8
     name: System
@@ -26,7 +26,7 @@ routes:
     pipeline: pan_system
     description: ""
     clones: []
-    filter: /,SYSTEM,/.test(_raw)
+    filter: _raw.indexOf(",SYSTEM,") > -1
     output: default
   - id: Ax1zbB
     name: Config
@@ -35,7 +35,7 @@ routes:
     pipeline: pan_config
     description: ""
     clones: []
-    filter: /,CONFIG,/.test(_raw)
+    filter: _raw.indexOf(",CONFIG,") > -1
     output: default
   - id: Ekpmod
     name: HIP Match
@@ -44,7 +44,7 @@ routes:
     pipeline: pan_hipmatch
     description: ""
     clones: []
-    filter: /,HIPMATCH,/.test(_raw)
+    filter: _raw.indexOf(",HIPMATCH,") > -1
     output: default
   - id: vycWVl
     name: User ID
@@ -53,7 +53,7 @@ routes:
     pipeline: pan_userid
     description: ""
     clones: []
-    filter: /,USERID,/.test(_raw)
+    filter: _raw.indexOf(",USERID,") > -1
     output: default
   - id: vhGy6p
     name: GlobalProtect
@@ -62,7 +62,7 @@ routes:
     pipeline: pan_globalprotect
     description: ""
     clones: []
-    filter: /,GLOBALPROTECT,/.test(_raw)
+    filter: _raw.indexOf(",GLOBALPROTECT,") > -1
     output: default
   - id: QGwqXS
     name: Decryption
@@ -71,7 +71,7 @@ routes:
     pipeline: pan_decryption
     description: ""
     clones: []
-    filter: /,DECRYPTION,/.test(_raw)
+    filter: _raw.indexOf(",DECRYPTION,") > -1
     output: default
   - id: default
     name: default

@@ -33,6 +33,10 @@ FW-.*,+01
 
 ## Release Notes
 ---
+### Version 0.6.1 - 2021-11-02
+* Bug fix - Corrects an issue in pipelines where the hostname is not correctly extracted if the date is a single digit. Unifies the hostname extraction across all pipelines.
+* Routes use `indexOf` filter instead of `test` for higher performance. 
+
 ### Version 0.6.0 - 2021-09-14
 Adds `device_info.csv` lookup file and lookup function in pipelines to adjust time zones per firewall.
 
