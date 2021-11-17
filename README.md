@@ -26,13 +26,16 @@ The `device_info.csv` file uses a regular expression lookup function in each pip
 Here is an example lookup file:
 ```
 host,tz
-KCMO-FW-\d+,-05
-FW-.*,+01
-.*,-04
+KCMO-FW-\d+,America/Chicago
+FW-.*,Etc/GMT+1
+.*,US/Eastern
 ```
 
 ## Release Notes
 ---
+### Version 0.6.2 - 2021-11-17
+* `device_info.csv` now uses Olson formatted timezones (e.g. `America/Chicago`) instead of static offsets and the [`C.Time.adjustTZ`](https://docs.cribl.io/logstream/cribl-reference/#time) function for better time zone support. A listing of time zones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
+
 ### Version 0.6.1 - 2021-11-02
 * Bug fix - Corrects an issue in pipelines where the hostname is not correctly extracted if the date is a single digit. Unifies the hostname extraction across all pipelines.
 * Routes use `indexOf` filter instead of `test` for higher performance. 

@@ -81,8 +81,7 @@ functions:
       srcField: _raw
       dstField: _time
       defaultTimezone: utc
-      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) : (time.getTime() /
-        1000)"
+      timeExpression: "__tz ? C.Time.adjustTZ(time.getTime(), 'UTC', __tz) / 1000 : time.getTime() / 1000"
       offset: 0
       maxLen: 150
       defaultTime: now
