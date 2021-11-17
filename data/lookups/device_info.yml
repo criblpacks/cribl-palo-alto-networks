@@ -1,4 +1,4 @@
 size: 7
 description: "Provides time zone information based on host configuration. Time zones should
-  be specified in this format: -05, +11, etc."
+  be specified in Olson format. E.g. America/Chicago, Etc/GMT-5, US/Central, etc."
 rows: 0
