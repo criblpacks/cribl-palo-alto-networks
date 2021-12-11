@@ -15,9 +15,9 @@ functions:
 
         #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
 
-        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+        #3-4. Use the Auto Timestamp function to set the event timestamp to the "generated time"
 
-        #4. Reshape the events using the parser to remove unnecessary fields
+        #5. Reshape the events using the parser to remove unnecessary fields
   - id: eval
     filter: "true"
     disabled: null
