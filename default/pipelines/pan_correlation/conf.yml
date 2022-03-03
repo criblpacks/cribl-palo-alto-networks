@@ -1,0 +1,114 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        This pipeline will process PAN Correlation event logs.
+
+
+        There are multiple functions in this pipeline:
+
+        #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
+
+        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #4. Reshape the events using the parser to remove unnecessary fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+            || host
+        - name: sourcetype
+          value: "'pan:correlation'"
+        - name: source
+          value: source || 'pan:syslog'
+        - name: index
+          value: index || 'pan_logs'
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
+      keep:
+        - _raw
+        - _time
+        - index
+        - host
+        - source
+        - sourcetype
+      remove:
+        - "*"
+  - id: lookup
+    filter: "true"
+    disabled: null
+    conf:
+      matchMode: regex
+      matchType: specific
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: device_info.csv
+      outFields:
+        - lookupField: tz
+          eventField: __tz
+    description: Add time zone offset as an internal field to the event. Uses the host
+      field to look up the value from device_info.csv file.
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) : (time.getTime() /
+        1000)"
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+    description: Use the correct "generated time" as the timestamp for the event.
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: reserialize
+      type: csv
+      srcField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - content_threat_type
+        - future_use2
+        - generated_time
+        - source_address_source_user
+        - virtual_system
+        - category
+        - severity
+        - device_group_hierarchy_level_1
+        - device_group_hierarchy_level_2
+        - device_group_hierarchy_level_3
+        - device_group_hierarchy_level_4
+        - virtual_system_name
+        - device_name
+        - virtual_system_id
+        - object_name
+        - object_id
+        - evidence
+      remove:
+        - future_use*
+        - "*_time"
+        - timestamp
+        - device_group_*
