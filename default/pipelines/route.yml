@@ -73,6 +73,17 @@ routes:
     clones: []
     filter: _raw.indexOf(",DECRYPTION,") > -1
     output: default
+  - id: Uwyn3m
+    name: Correlation
+    final: true
+    disabled: false
+    pipeline: pan_correlation
+    description: ""
+    clones: [ ]
+    enableOutputExpression: false
+    outputExpression: null
+    filter: _raw.indexOf(",CORRELATION,") > -1
+    output: default
   - id: default
     name: default
     final: true

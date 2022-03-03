@@ -33,6 +33,9 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 0.6.3 - 2022-03-03
+* Adds Correlation event log pipeline.
+
 ### Version 0.6.2 - 2021-11-17
 * `device_info.csv` now uses Olson formatted timezones (e.g. `America/Chicago`) instead of static offsets and the [`C.Time.adjustTZ`](https://docs.cribl.io/logstream/cribl-reference/#time) function for better time zone support. A listing of time zones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
 
@@ -41,16 +44,16 @@ FW-.*,Etc/GMT+1
 * Routes use `indexOf` filter instead of `test` for higher performance. 
 
 ### Version 0.6.0 - 2021-09-14
-Adds `device_info.csv` lookup file and lookup function in pipelines to adjust time zones per firewall.
+* Adds `device_info.csv` lookup file and lookup function in pipelines to adjust time zones per firewall.
 
 ### Version 0.5.2 - 2021-08-12
-Adds pack display name for LogStream v3.1
+* Adds pack display name for LogStream v3.1
 
 ### Version 0.5.1 - 2021-07-21
-Fixes README
+* Fixes README
 
 ### Version 0.5.0 - 2021-07-20
-Initial release
+* Initial release
 
 
 ## Contributing to the Pack
@@ -63,4 +66,4 @@ The author of this pack is Brendan Dalpe and can be contacted at <bdalpe@cribl.i
 
 ## License
 ---
-This Pack uses the following license: [`Apache 2.0`](https://github.com/criblio/appscope/blob/master/LICENSE).
+This Pack uses the following license: [`Apache 2.0`](https://github.com/criblpacks/cribl-palo-alto-networks/blob/master/LICENSE).
