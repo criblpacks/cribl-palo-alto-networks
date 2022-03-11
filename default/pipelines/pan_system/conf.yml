@@ -115,10 +115,14 @@ functions:
         - devicegroup_level4
         - vsys_name
         - dvc_name
+        - future_use5
+        - future_use6
+        - high_res_timestamp
       remove:
         - future_use*
         - receive_time
         - generated_time
+        - high_res_timestamp
   - id: serde
     filter: "true"
     disabled: true

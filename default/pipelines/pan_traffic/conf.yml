@@ -160,9 +160,84 @@ functions:
         - tunnel_session_id
         - tunnel_start_time
         - tunnel_type
+        - sctp_assoc_id
+        - sctp_chunks
+        - sctp_chunks_sent
+        - sctp_chunks_received
+        - rule_uuid
+        - http2_connection
+        - link_change_count
+        - policy_id
+        - link_switches
+        - sdwan_cluster
+        - sdwan_device_type
+        - sdwan_cluster_type
+        - sdwan_site
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_category
+        - src_dvc_profile
+        - src_dvc_model
+        - src_dvc_vendor
+        - src_dvc_os_family
+        - src_dvc_os_version
+        - src_dvc_host
+        - src_dvc_mac
+        - dest_dvc_category
+        - dest_dvc_profile
+        - dest_dvc_model
+        - dest_dvc_vendor
+        - dest_dvc_os_family
+        - dest_dvc_os_version
+        - dest_dvc_host
+        - dest_dvc_mac
+        - container_id
+        - pod_namespace
+        - pod_name
+        - src_edl
+        - dest_edl
+        - host_id
+        - dvc_serial_number
+        - src_dag
+        - dest_dag
+        - session_owner
+        - high_res_timestamp
+        - nsdsai_sst
+        - nsdsai_sd
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_tunneled
+        - app_saas
+        - app_sanction
+        - offloaded
       remove:
         - future_use*
         - "*_time"
+        - sctp_*
+        - rule_uuid
+        - http2_connection
+        - link_*
+        - policy_id
+        - sdwan_*
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_*
+        - dest_dvc_*
+        - container_id
+        - pod_*
+        - "*_edl"
+        - host_id
+        - dvc_serial_number
+        - "*_dag"
+        - session_owner
+        - high_res_timestamp
+        - nsdsai_*
+        - app_*
+        - offloaded
       keep: []
   - id: comment
     filter: "true"
@@ -273,6 +348,60 @@ functions:
         - tunnel_session_id
         - tunnel_start_time
         - tunnel_type
+        - sctp_assoc_id
+        - sctp_chunks
+        - sctp_chunks_sent
+        - sctp_chunks_received
+        - rule_uuid
+        - http2_connection
+        - link_change_count
+        - policy_id
+        - link_switches
+        - sdwan_cluster
+        - sdwan_device_type
+        - sdwan_cluster_type
+        - sdwan_site
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_category
+        - src_dvc_profile
+        - src_dvc_model
+        - src_dvc_vendor
+        - src_dvc_os_family
+        - src_dvc_os_version
+        - src_dvc_host
+        - src_dvc_mac
+        - dest_dvc_category
+        - dest_dvc_profile
+        - dest_dvc_model
+        - dest_dvc_vendor
+        - dest_dvc_os_family
+        - dest_dvc_os_version
+        - dest_dvc_host
+        - dest_dvc_mac
+        - container_id
+        - pod_namespace
+        - pod_name
+        - src_edl
+        - dest_edl
+        - host_id
+        - dvc_serial_number
+        - src_dag
+        - dest_dag
+        - session_owner
+        - high_res_timestamp
+        - nsdsai_sst
+        - nsdsai_sd
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_tunneled
+        - app_saas
+        - app_sanction
+        - offloaded
       remove: []
       keep: []
       dstField: __parsed

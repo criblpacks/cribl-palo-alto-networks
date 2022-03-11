@@ -104,7 +104,7 @@ functions:
         - private_ip
         - private_ipv6
         - host_id
-        - serial_number
+        - serialnumber
         - client_ver
         - client_os
         - client_os_ver

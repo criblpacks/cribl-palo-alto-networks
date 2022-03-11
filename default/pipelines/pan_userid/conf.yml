@@ -113,6 +113,12 @@ functions:
         - factor_type
         - factor_completion_time
         - factor_number
+        - future_use2
+        - future_use3
+        - ugflags
+        - userbysource
+        - high_res_timestamp
       remove:
         - future_use*
         - "*_time"
+        - high_res_timestamp

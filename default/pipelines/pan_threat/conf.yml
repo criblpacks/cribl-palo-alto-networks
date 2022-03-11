@@ -155,6 +155,56 @@ functions:
         - tunnel_type
         - threat_category
         - content_version
+        - future_use6
+        - sctp_assoc_id
+        - payload_protocol_id
+        - http_headers
+        - url_category_list
+        - rule_uuid
+        - http2_connection
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_category
+        - src_dvc_profile
+        - src_dvc_model
+        - src_dvc_vendor
+        - src_dvc_os_family
+        - src_dvc_os_version
+        - src_dvc_host
+        - src_dvc_mac
+        - dest_dvc_category
+        - dest_dvc_profile
+        - dest_dvc_model
+        - dest_dvc_vendor
+        - dest_dvc_os_family
+        - dest_dvc_os_version
+        - dest_dvc_host
+        - dest_dvc_mac
+        - container_id
+        - pod_namespace
+        - pod_name
+        - src_edl
+        - dest_edl
+        - host_id
+        - dvc_serial_number
+        - domain_edl
+        - src_dag
+        - dest_dag
+        - partial_hash
+        - high_res_timestmp
+        - reason
+        - justification
+        - nssai_sst
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_saas
+        - app_sanction
+        - app_tunneled
+        - cloud_report_id
       keep: []
       remove:
         - receive_time
@@ -163,3 +213,26 @@ functions:
         - dest_location
         - future_use*
         - sequence_number
+        - sctp_*
+        - payload_protocol_id
+        - http_headers
+        - url_category_list
+        - rule_uuid
+        - http2_connection
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_*
+        - dest_dvc_*
+        - container_id
+        - pod_*
+        - "*_edl"
+        - host_id
+        - dvc_serial_number
+        - "*_dag"
+        - partial_hash
+        - high_res_timestmp
+        - reason
+        - justification
+        - nssai_sst
+        - app_*
+        - cloud_report_id

@@ -127,7 +127,7 @@ functions:
         - key_exchange_algorithm
         - encryption_algorithm
         - hash_algorithm
-        - rule
+        - policy_name
         - elliptic_curve
         - error_index
         - root_status
@@ -175,7 +175,26 @@ functions:
         - dest_mac
         - sequence_number
         - action_flags
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - device_name
+        - vsys_id
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_saas
+        - app_sanctioned
       remove:
         - future_use*
         - "*_time"
         - timestamp
+        - dest_dvc_*
+        - src_dvc_*
+        - devicegroup_*
+        - app_*

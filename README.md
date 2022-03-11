@@ -33,6 +33,9 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 0.7.0 - 2022-03-10
+* Updates parser fields to PAN OS 10.2. All fields added in PAN OS 10 are removed from events by default.
+
 ### Version 0.6.3 - 2022-03-03
 * Adds Correlation event log pipeline.
 

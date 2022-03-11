@@ -108,6 +108,8 @@ functions:
         - devicegroup_level4
         - vsys_name
         - dvc_name
+        - dvc_group
+        - audit_comment
       remove:
         - future_use*
         - "*_time"
