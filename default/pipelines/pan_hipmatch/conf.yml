@@ -112,6 +112,11 @@ functions:
         - dvc_name
         - vsys_id
         - ipv6_system_address
+        - host_id
+        - serialnumber
+        - mac
+        - high_res_timestamp
       remove:
         - future_use*
         - "*_time"
+        - high_res_timestamp
