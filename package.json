@@ -1,1 +1,1 @@
-{"name":"PAN","version":"0.7.0","author":"Brendan Dalpe - Cribl","description":"Process, reduce, and transform Palo Alto Networks Firewall logs.","displayName":"Palo Alto Networks"}
+{"name":"cribl-palo-alto-networks","version":"1.0.0","author":"Brendan Dalpe - Cribl","description":"Process, reduce, and transform Palo Alto Networks Firewall logs.","displayName":"Palo Alto Networks","tags":{"dataType":["logs"],"useCase":["reduction","filtering"],"technology":["paloalto"]}}
