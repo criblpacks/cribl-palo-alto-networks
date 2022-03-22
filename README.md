@@ -33,6 +33,11 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 1.0.0 - 2022-03-22
+* Update to version 1.0.0 - major release for new Pack Dispensary 🎉
+* Changes Pack ID from `PAN` to `cribl-palo-alto-networks` to match naming convention of Cribl built Packs.
+* This is a **breaking** change and all references in Routes/Pipelines must be updated!
+
 ### Version 0.7.0 - 2022-03-10
 * Updates parser fields to PAN OS 10.2. All fields added in PAN OS 10 are removed from events by default.
 
