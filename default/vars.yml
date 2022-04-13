@@ -1,0 +1,12 @@
+pan_default_index:
+  type: any
+  lib: custom
+  value: "'pan_logs'"
+  description: The default index field value set in this Pack's pipelines
+  tags: pan
+pan_default_source:
+  type: any
+  lib: custom
+  description: The default source field value set in this Pack's pipelines
+  value: "'pan:syslog'"
+  tags: pan

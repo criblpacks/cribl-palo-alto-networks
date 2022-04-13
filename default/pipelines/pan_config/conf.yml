@@ -27,8 +27,8 @@ functions:
         - value: "'pan:config'"
           name: sourcetype
         - name: source
-          value: source || 'pan:syslog'
-        - value: index || 'pan_logs'
+          value: source || C.vars.pan_default_source
+        - value: index || C.vars.pan_default_index
           name: index
         - value: (message || _raw).substring((message || _raw).indexOf(','))
           name: _raw

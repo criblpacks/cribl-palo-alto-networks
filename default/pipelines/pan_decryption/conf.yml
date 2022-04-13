@@ -27,9 +27,9 @@ functions:
         - name: sourcetype
           value: "'pan:decryption'"
         - name: source
-          value: source || 'pan:syslog'
+          value: source || C.vars.pan_default_source
         - name: index
-          value: index || 'pan_logs'
+          value: index || C.vars.pan_default_index
         - name: _raw
           value: (message || _raw).substring((message || _raw).indexOf(','))
       keep:
