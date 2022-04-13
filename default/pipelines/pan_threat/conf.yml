@@ -1,5 +1,9 @@
 output: default
-groups: {}
+groups:
+  ZHU77H:
+    name: Reserialization of Events
+    disabled: false
+    index: 6
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -14,22 +18,27 @@ functions:
 
         #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
 
-        #3-4. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+        #3. The parser function extracts all field values to the top level for event processing
 
-        #5. Reshape the events using the parser to remove unnecessary fields
+        #4. If the pan_device_name_as_host Global Variable is set to true, use the dvc_name field as the host value
+
+        #5-6. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #7-11. Reserialization of Events back into CSV dropping fields that are not relevant
   - id: eval
     filter: "true"
     disabled: null
     conf:
       add:
         - name: host
-          value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1] || host
+          value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+            || host
         - name: _raw
           value: (message || _raw).substring((message || _raw).indexOf(','))
         - name: sourcetype
           value: "'pan:threat'"
         - name: source
-          value: source || C.vars.pan_default_source
+          value: index || C.vars.pan_default_source
         - name: index
           value: index || C.vars.pan_default_index
       remove:
@@ -41,46 +50,11 @@ functions:
         - source
         - sourcetype
         - _time
-  - id: lookup
-    filter: "true"
-    disabled: null
-    conf:
-      matchMode: regex
-      matchType: specific
-      reloadPeriodSec: 60
-      addToEvent: false
-      inFields:
-        - eventField: host
-          lookupField: host
-      ignoreCase: false
-      file: device_info.csv
-      outFields:
-        - lookupField: tz
-          eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
-  - id: auto_timestamp
-    filter: "true"
-    disabled: null
-    conf:
-      srcField: _raw
-      dstField: _time
-      defaultTimezone: utc
-      timeExpression: "__tz ? C.Time.adjustTZ(time.getTime(), 'UTC', __tz) / 1000 : time.getTime() / 1000"
-      offset: 0
-      maxLen: 150
-      defaultTime: now
-      latestDateAllowed: +1week
-      earliestDateAllowed: -420weeks
-      timestamps:
-        - regex: /^(?:[^,]*,){6}([^,]+)/
-          strptime: "%Y/%m/%d %H:%M:%S"
-    description: Use the correct "generated time" as the timestamp for the event.
   - id: serde
     filter: "true"
     disabled: false
     conf:
-      mode: reserialize
+      mode: extract
       type: csv
       srcField: _raw
       fields:
@@ -206,6 +180,78 @@ functions:
         - app_tunneled
         - cloud_report_id
       keep: []
+      remove: []
+  - id: eval
+    filter: C.vars.pan_device_name_as_host
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: dvc_name || host
+    description: If Global Variable is true, set the host field value to the value from the
+      dvc_name field
+  - id: lookup
+    filter: "true"
+    disabled: null
+    conf:
+      matchMode: regex
+      matchType: specific
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: device_info.csv
+      outFields:
+        - lookupField: tz
+          eventField: __tz
+    description: Add time zone offset as an internal field to the event. Uses the host
+      field to look up the value from device_info.csv file.
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: "__tz ? C.Time.adjustTZ(time.getTime(), 'UTC', __tz) / 1000 :
+        time.getTime() / 1000"
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /^(?:[^,]*,){6}([^,]+)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+    description: Use the correct "generated time" as the timestamp for the event.
+  - id: comment
+    filter: "true"
+    disabled: false
+    conf:
+      comment: >-
+        The following fields are dropped from the original message:
+
+        * future_use_* - there is no defined usage of these fields
+
+        * *_time - redundant fields. The "generated_time" field is true timestamp of the event and is used for the Auto Timestamp function.
+    groupId: ZHU77H
+  - id: comment
+    filter: "true"
+    disabled: false
+    conf:
+      comment: >-
+        The following fields are removed because they are not included in the
+        field extractions for the Splunk TA:
+
+
+        rule_uuid, http2_connection, link_change_count, policy_id, link_switches, sdwan_cluster, sdwan_device_type, sdwan_cluster_type, sdwan_site, dynusergroup_name, xff_ip, src_dvc_category, src_dvc_profile, src_dvc_model, src_dvc_vendor, src_dvc_os_family, src_dvc_os_version, src_dvc_host, src_dvc_mac, dest_dvc_category, dest_dvc_profile, dest_dvc_model, dest_dvc_vendor, dest_dvc_os_family, dest_dvc_os_version, dest_dvc_host, dest_dvc_mac, container_id, pod_namespace, pod_name, src_edl, dest_edl, host_id, dvc_serial_number, src_dag, dest_dag, session_owner, high_res_timestamp, nsdsai_sst, nsdsai_sd, app_subcategory, app_category, app_technology, app_risk, app_characteristic, app_container, app_tunneled, app_saas, app_sanction, offloaded
+    groupId: ZHU77H
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
       remove:
         - receive_time
         - generated_time
@@ -236,3 +282,104 @@ functions:
         - nssai_sst
         - app_*
         - cloud_report_id
+      keep:
+        - _time
+    groupId: ZHU77H
+    description: Remove fields from event where the values should not be serialized
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: csv
+      dstField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - log_subtype
+        - version
+        - generated_time
+        - src_ip
+        - dest_ip
+        - src_translated_ip
+        - dest_translated_ip
+        - rule
+        - src_user
+        - dest_user
+        - app
+        - vsys
+        - src_zone
+        - dest_zone
+        - src_interface
+        - dest_interface
+        - log_forwarding_profile
+        - future_use3
+        - session_id
+        - repeat_count
+        - src_port
+        - dest_port
+        - src_translated_port
+        - dest_translated_port
+        - session_flags
+        - transport
+        - action
+        - misc
+        - threat
+        - raw_category
+        - severity
+        - direction
+        - sequence_number
+        - action_flags
+        - src_location
+        - dest_location
+        - future_use4
+        - content_type
+        - pcap_id
+        - file_hash
+        - cloud_address
+        - url_index
+        - user_agent
+        - file_type
+        - xff
+        - referrer
+        - sender
+        - subject
+        - recipient
+        - report_id
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+        - future_use5
+        - src_vm
+        - dest_vm
+        - http_method
+        - tunnel_id
+        - tunnel_monitor_tag
+        - tunnel_session_id
+        - tunnel_start_time
+        - tunnel_type
+        - threat_category
+        - content_version
+        - future_use6
+    groupId: ZHU77H
+    description: Push event back into CSV format in _raw
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - _raw
+        - _time
+        - index
+        - host
+        - source
+        - sourcetype
+      remove:
+        - "*"
+    description: Final field cleanup
+    groupId: ZHU77H
+description: THREAT log type
