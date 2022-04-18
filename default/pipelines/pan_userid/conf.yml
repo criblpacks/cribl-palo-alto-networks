@@ -53,7 +53,7 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      mode: reserialize
+      mode: extract
       type: csv
       srcField: _raw
       fields:
