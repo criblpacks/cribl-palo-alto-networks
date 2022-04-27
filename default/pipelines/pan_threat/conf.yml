@@ -38,7 +38,7 @@ functions:
         - name: sourcetype
           value: "'pan:threat'"
         - name: source
-          value: index || C.vars.pan_default_source
+          value: source || C.vars.pan_default_source
         - name: index
           value: index || C.vars.pan_default_index
       remove:
