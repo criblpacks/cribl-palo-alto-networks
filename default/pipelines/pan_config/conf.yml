@@ -32,14 +32,14 @@ functions:
         - name: host
           value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
             || host
+        - value: (message || _raw).substring((message || _raw).indexOf(','))
+          name: _raw
         - value: "'pan:config'"
           name: sourcetype
         - name: source
           value: source || C.vars.pan_default_source
         - value: index || C.vars.pan_default_index
           name: index
-        - value: (message || _raw).substring((message || _raw).indexOf(','))
-          name: _raw
       keep:
         - _raw
         - _time
@@ -90,8 +90,8 @@ functions:
       add:
         - name: host
           value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -108,8 +108,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null

@@ -32,14 +32,14 @@ functions:
         - name: host
           value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
             || host
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
         - name: sourcetype
           value: "'pan:decryption'"
         - name: source
           value: source || C.vars.pan_default_source
         - name: index
           value: index || C.vars.pan_default_index
-        - name: _raw
-          value: (message || _raw).substring((message || _raw).indexOf(','))
       keep:
         - _raw
         - _time
@@ -86,7 +86,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - flags
-        - IP_PROTOCOL
+        - ip_protocol
         - action
         - tunnel_id
         - future_use2
@@ -112,8 +112,8 @@ functions:
         - cert_end_time
         - cert_version
         - cert_size
-        - cn_lenght
-        - issure_cn_length
+        - cn_length
+        - issuer_cn_length
         - root_cn_length
         - sni_length
         - cert_flags
@@ -153,7 +153,7 @@ functions:
         - devicegroup_level3
         - devicegroup_level4
         - vsys_name
-        - device_name
+        - dvc_name
         - vsys_id
         - app_subcategory
         - app_category
@@ -161,6 +161,7 @@ functions:
         - app_risk
         - app_characteristic
         - app_container
+        - app_tunneled
         - app_saas
         - app_sanctioned
   - id: eval
@@ -170,8 +171,8 @@ functions:
       add:
         - name: host
           value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -188,8 +189,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -267,7 +268,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - flags
-        - IP_PROTOCOL
+        - ip_protocol
         - action
         - tunnel_id
         - future_use2
@@ -293,8 +294,8 @@ functions:
         - cert_end_time
         - cert_version
         - cert_size
-        - cn_lenght
-        - issure_cn_length
+        - cn_length
+        - issuer_cn_length
         - root_cn_length
         - sni_length
         - cert_flags
@@ -329,6 +330,22 @@ functions:
         - dest_mac
         - sequence_number
         - action_flags
+        - devicegroup_level1
+        - devicegroup_level2
+        - devicegroup_level3
+        - devicegroup_level4
+        - vsys_name
+        - dvc_name
+        - vsys_id
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_tunneled
+        - app_saas
+        - app_sanction
     description: Serialize PAN OS events to the fields used in the Splunk TA
     groupId: yicqwn
   - id: eval

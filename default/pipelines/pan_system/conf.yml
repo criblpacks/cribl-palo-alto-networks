@@ -55,8 +55,8 @@ functions:
         - _time
       remove:
         - "*"
-    description: Set fields to correct values and remove the remainder. Cleanup the _raw
-      field by removing the syslog header.
+    description: Set fields to correct values and remove the remainder. Cleanup the
+      _raw field by removing the syslog header.
   - id: serde
     filter: "true"
     disabled: false
@@ -98,8 +98,8 @@ functions:
       add:
         - name: host
           value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -116,8 +116,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null

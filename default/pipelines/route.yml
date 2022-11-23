@@ -79,7 +79,7 @@ routes:
     disabled: false
     pipeline: pan_correlation
     description: ""
-    clones: [ ]
+    clones: []
     enableOutputExpression: false
     outputExpression: null
     filter: _raw.indexOf(",CORRELATION,") > -1
