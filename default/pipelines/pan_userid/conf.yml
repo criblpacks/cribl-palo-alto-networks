@@ -32,14 +32,14 @@ functions:
         - value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
             || host
           name: host
+        - name: _raw
+          value: (message || _raw).substring((message || _raw).indexOf(','))
         - name: sourcetype
           value: "'pan:userid'"
         - name: source
           value: source || C.vars.pan_default_source
         - name: index
           value: index || C.vars.pan_default_index
-        - name: _raw
-          value: (message || _raw).substring((message || _raw).indexOf(','))
       keep:
         - _raw
         - _time
@@ -66,14 +66,15 @@ functions:
         - generated_time
         - vsys
         - src_ip
-        - source_name
+        - user
+        - datasource_name
         - event_id
         - repeat_count
         - timeout_threshold
         - src_port
         - dest_port
-        - source
-        - source_type
+        - datasource
+        - datasource_type
         - sequence_number
         - action_flags
         - devicegroup_level1
@@ -86,8 +87,6 @@ functions:
         - factor_type
         - factor_completion_time
         - factor_number
-        - future_use2
-        - future_use3
         - ugflags
         - userbysource
         - high_res_timestamp
@@ -97,9 +96,9 @@ functions:
     conf:
       add:
         - name: host
-          value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+          value: " dvc_name || host"
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -116,8 +115,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -175,14 +174,15 @@ functions:
         - generated_time
         - vsys
         - src_ip
-        - source_name
+        - user
+        - datasource_name
         - event_id
         - repeat_count
         - timeout_threshold
         - src_port
         - dest_port
-        - source
-        - source_type
+        - datasource
+        - datasource_type
         - sequence_number
         - action_flags
         - devicegroup_level1
@@ -195,8 +195,6 @@ functions:
         - factor_type
         - factor_completion_time
         - factor_number
-        - future_use2
-        - future_use3
         - ugflags
         - userbysource
         - high_res_timestamp

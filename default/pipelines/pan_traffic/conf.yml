@@ -62,8 +62,8 @@ functions:
         - sourcetype
       remove:
         - "*"
-    description: Set fields to correct values and remove the remainder. Cleanup the _raw
-      field by removing the syslog header.
+    description: Set fields to correct values and remove the remainder. Cleanup the
+      _raw field by removing the syslog header.
   - id: serde
     filter: "true"
     disabled: false
@@ -101,7 +101,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - session_flags
-        - transport
+        - ip_protocol
         - action
         - bytes
         - bytes_out
@@ -197,8 +197,8 @@ functions:
       add:
         - name: host
           value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -215,8 +215,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: false
@@ -300,7 +300,8 @@ functions:
     conf:
       remove:
         - future_use*
-        - "*_time"
+        - generated_time
+        - receive_time
         - sctp_*
         - rule_uuid
         - http2_connection
@@ -322,6 +323,7 @@ functions:
         - nsdsai_*
         - app_*
         - offloaded
+        - tunnel_start_time
       keep:
         - _time
     groupId: yicqwn
@@ -362,7 +364,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - session_flags
-        - transport
+        - ip_protocol
         - action
         - bytes
         - bytes_out
@@ -394,6 +396,59 @@ functions:
         - tunnel_session_id
         - tunnel_start_time
         - tunnel_type
+        - sctp_assoc_id
+        - sctp_chunks
+        - sctp_chunks_sent
+        - sctp_chunks_received
+        - rule_uuid
+        - http2_connection
+        - link_change_count
+        - policy_id
+        - link_switches
+        - sdwan_cluster
+        - sdwan_device_type
+        - sdwant_cluster_type
+        - sdwan_site
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_category
+        - src_dvc_model
+        - src_dvc_vendor
+        - src_dvc_os_family
+        - src_dvc_os_version
+        - src_dvc_host
+        - src_dvc_mac
+        - dest_dvc_category
+        - dest_dvc_profile
+        - dest_dvc_model
+        - dest_dvc_vendor
+        - dest_dvc_os_family
+        - dest_dvc_os_version
+        - dest_dvc_host
+        - dest_dvc_mac
+        - container_id
+        - pod_namespace
+        - pod_name
+        - src_edl
+        - dest_edl
+        - host_id
+        - dvc_serial_number
+        - src_dag
+        - dest_dag
+        - session_owner
+        - high_res_timestamp
+        - nsdsadi_sst
+        - nsdsadi_sd
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_tunneled
+        - app_saas
+        - app_sanction
+        - offloaded
     description: Serialize PAN OS events to the fields used in the Splunk TA
     groupId: yicqwn
   - id: eval

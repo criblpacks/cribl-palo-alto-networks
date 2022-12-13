@@ -87,7 +87,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - session_flags
-        - transport
+        - ip_protocol
         - action
         - misc
         - threat
@@ -165,7 +165,7 @@ functions:
         - src_dag
         - dest_dag
         - partial_hash
-        - high_res_timestmp
+        - high_res_timestamp
         - reason
         - justification
         - nssai_sst
@@ -175,9 +175,9 @@ functions:
         - app_risk
         - app_characteristic
         - app_container
+        - app_tunneled
         - app_saas
         - app_sanction
-        - app_tunneled
         - cloud_report_id
       keep: []
       remove: []
@@ -188,8 +188,8 @@ functions:
       add:
         - name: host
           value: dvc_name || host
-    description: If Global Variable is true, set the host field value to the value from the
-      dvc_name field
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
   - id: lookup
     filter: "true"
     disabled: null
@@ -206,8 +206,8 @@ functions:
       outFields:
         - lookupField: tz
           eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -276,7 +276,7 @@ functions:
         - dvc_serial_number
         - "*_dag"
         - partial_hash
-        - high_res_timestmp
+        - high_res_timestamp
         - reason
         - justification
         - nssai_sst
@@ -322,7 +322,7 @@ functions:
         - src_translated_port
         - dest_translated_port
         - session_flags
-        - transport
+        - ip_protocol
         - action
         - misc
         - threat
@@ -365,6 +365,55 @@ functions:
         - threat_category
         - content_version
         - future_use6
+        - sctp_assoc_id
+        - payload_protocol_id
+        - http_headers
+        - url_category_list
+        - rule_uuid
+        - http2_connection
+        - dynusergroup_name
+        - xff_ip
+        - src_dvc_category
+        - src_dvc_profile
+        - src_dvc_model
+        - src_dvc_vendor
+        - src_dvc_os_family
+        - src_dvc_os_version
+        - src_dvc_host
+        - src_dvc_mac
+        - dest_dvc_cateogry
+        - dest_dvc_profile
+        - dest_dvc_model
+        - dest_dvc_vendor
+        - dest_dvc_os_family
+        - dest_dvc_os_version
+        - dest_dvc_host
+        - dest_dvc_mac
+        - container_id
+        - pod_namespace
+        - pod_name
+        - src_edl
+        - dest_edl
+        - host_id
+        - dvc_serial_number
+        - domain_edl
+        - src_dag
+        - dest_dag
+        - partial_hash
+        - high_res_timestamp
+        - reason
+        - justification
+        - nssai_sst
+        - app_subcategory
+        - app_category
+        - app_technology
+        - app_risk
+        - app_characteristic
+        - app_container
+        - app_tunneled
+        - app_saas
+        - app_sanction
+        - cloud_report_id
     groupId: ZHU77H
     description: Push event back into CSV format in _raw
   - id: eval
