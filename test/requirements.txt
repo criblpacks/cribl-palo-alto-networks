@@ -1,0 +1,2 @@
+requests==2.26.0
+ndjson==0.3.1

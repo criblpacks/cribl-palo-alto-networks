@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  cribl:
+    image: cribl/cribl:${CRIBL_VERSION:-latest}
+    ports:
+      - "9000:9000"
+      - "9514:9514"
+      - "9514:9514/udp"
