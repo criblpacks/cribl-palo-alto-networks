@@ -1,5 +1,8 @@
 output: default
-groups: {}
+groups:
+  yicqwn:
+    name: Reserialization of Events
+    index: 6
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -14,22 +17,27 @@ functions:
 
         #2. Simple eval to set the host, sourcetype, source, index, and cleanup the _raw message to remove the syslog header
 
-        #3. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+        #3. The parser function extracts all field values to the top level for event processing
 
-        #4. Reshape the events using the parser to remove unnecessary fields
+        #4. If the pan_device_name_as_host Global Variable is set to true, use the dvc_name field as the host value
+
+        #5-6. Use the Auto Timestamp function to set the event timestamp to the "generated time"
+
+        #7-10. Reserialization of Events back into CSV dropping fields that are not relevant
   - id: eval
     filter: "true"
     disabled: null
     conf:
       add:
         - name: host
-          value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1] || host
+          value: _raw.match(/[A-Z][a-z]{2}\s{1,2}\d{1,2}\s\d{2}:\d{2}:\d{2}\s([^\s]+)\s/)[1]
+            || host
         - name: sourcetype
           value: "'pan:correlation'"
         - name: source
-          value: source || 'pan:syslog'
+          value: source || C.vars.pan_default_source
         - name: index
-          value: index || 'pan_logs'
+          value: index || C.vars.pan_default_index
         - name: _raw
           value: (message || _raw).substring((message || _raw).indexOf(','))
       keep:
@@ -41,46 +49,11 @@ functions:
         - sourcetype
       remove:
         - "*"
-  - id: lookup
-    filter: "true"
-    disabled: null
-    conf:
-      matchMode: regex
-      matchType: specific
-      reloadPeriodSec: 60
-      addToEvent: false
-      inFields:
-        - eventField: host
-          lookupField: host
-      ignoreCase: false
-      file: device_info.csv
-      outFields:
-        - lookupField: tz
-          eventField: __tz
-    description: Add time zone offset as an internal field to the event. Uses the host
-      field to look up the value from device_info.csv file.
-  - id: auto_timestamp
-    filter: "true"
-    disabled: null
-    conf:
-      srcField: _raw
-      dstField: _time
-      defaultTimezone: utc
-      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) : (time.getTime() / 1000)"
-      offset: 0
-      maxLen: 150
-      defaultTime: now
-      latestDateAllowed: +1week
-      earliestDateAllowed: -420weeks
-      timestamps:
-        - regex: /^(?:[^,]*,){6}([^,]+)/
-          strptime: "%Y/%m/%d %H:%M:%S"
-    description: Use the correct "generated time" as the timestamp for the event.
   - id: serde
     filter: "true"
     disabled: null
     conf:
-      mode: reserialize
+      mode: extract
       type: csv
       srcField: _raw
       fields:
@@ -105,8 +78,117 @@ functions:
         - object_name
         - object_id
         - evidence
+  - id: eval
+    filter: C.vars.pan_device_name_as_host
+    disabled: null
+    conf:
+      add:
+        - name: host
+          value: dvc_name || host
+    description: If Global Variable is true, set the host field value to the value
+      from the dvc_name field
+  - id: lookup
+    filter: "true"
+    disabled: null
+    conf:
+      matchMode: regex
+      matchType: specific
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: device_info.csv
+      outFields:
+        - lookupField: tz
+          eventField: __tz
+    description: Add time zone offset as an internal field to the event. Uses the
+      host field to look up the value from device_info.csv file.
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: generated_time
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: "__tz ? (time.getTime() / 1000) + (__tz * 3600) :
+        (time.getTime() / 1000)"
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+      timestamps:
+        - regex: /(.*)/
+          strptime: "%Y/%m/%d %H:%M:%S"
+    description: Use the correct "generated time" as the timestamp for the event.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        The following fields are dropped from the original message:
+
+        * future_use_* - there is no defined usage of these fields
+
+        * *_time, timestamp - redundant fields. The "generated_time" field is true timestamp of the event and is used for the Auto Timestamp function.
+    groupId: yicqwn
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
       remove:
         - future_use*
         - "*_time"
         - timestamp
-        - device_group_*
+      keep:
+        - _time
+    groupId: yicqwn
+    description: Remove fields from event where the values should not be serialized
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: csv
+      dstField: _raw
+      fields:
+        - future_use1
+        - receive_time
+        - serial_number
+        - type
+        - content_threat_type
+        - future_use2
+        - generated_time
+        - source_address_source_user
+        - virtual_system
+        - category
+        - severity
+        - device_group_hierarchy_level_1
+        - device_group_hierarchy_level_2
+        - device_group_hierarchy_level_3
+        - device_group_hierarchy_level_4
+        - virtual_system_name
+        - device_name
+        - virtual_system_id
+        - object_name
+        - object_id
+        - evidence
+    description: Serialize PAN OS events to the fields used in the Splunk TA
+    groupId: yicqwn
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - _raw
+        - _time
+        - index
+        - host
+        - source
+        - sourcetype
+      remove:
+        - "*"
+    description: Final field cleanup
+    groupId: yicqwn
+description: CORRELATION log type

@@ -1,0 +1,19 @@
+pan_default_index:
+  type: string
+  lib: custom
+  value: "'pan_logs'"
+  description: The default index field value set in this Pack's pipelines
+  tags: pan
+pan_default_source:
+  type: string
+  lib: custom
+  description: The default source field value set in this Pack's pipelines
+  value: "'pan:syslog'"
+  tags: pan
+pan_device_name_as_host:
+  type: boolean
+  lib: custom
+  value: "false"
+  description: If true, sets the host field to the value of the "device_name" field in the
+    event instead of the host value from the syslog header
+  tags: pan

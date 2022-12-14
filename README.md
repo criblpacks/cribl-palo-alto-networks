@@ -10,13 +10,13 @@ You should expect to see 15-30% reduction in the size of your Palo Alto Firewall
 
 ## Installation
 ---
-1. Download the most recent .crbl file from the repo [releases page](https://github.com/criblpacks/cribl-palo-alto-networks/releases).
-2. Create a Route with with a filter for your Palo Alto Firewall events. A sample filter to match all events:
+1. Install this pack from the [Cribl Pack Dispensary](https://packs.cribl.io), use the Git clone feature inside Cribl Stream, or download the most recent .crbl file from the repo [releases page](https://github.com/criblpacks/cribl-palo-alto-networks/releases).
+2. Create a Route with a filter for your Palo Alto Firewall events. A sample filter to match all events:
 ```
 (sourcetype=='pan:log' || sourcetype=='pan_log' || /^[^,]+,[^,]+,[^,]+,(THREAT|TRAFFIC|SYSTEM|CONFIG|HIPMATCH|CORRELATION|USERID|GLOBALPROTECT),/.test(_raw))
 ```
-3. Select the `PAN` pack as the pipeline.
-4. Configure the pack pipelines with the appropriate index for your Palo Alto logs. By default the index field will be set to `pan_logs`.
+3. Select the `cribl-palo-alto-networks` pack as the pipeline.
+4. Configure the Global Variable (`pan_default_index`) inside the Pack with the appropriate Splunk index for your Palo Alto logs. By default, the index field will be set to `pan_logs`.
 
 ### Configure Device Information
 This pack assumes all of your firewalls use UTC/GMT for their time zone configuration. If you use local time zones, please configure the `device_info.csv` lookup file (located in the pack's Knowledge content).
@@ -33,6 +33,13 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 1.1.0 - 2022-04-12
+* Fixes incorrect sourcetype set in Decryption pipeline
+* Add explanations why fields are dropped
+* New feature: use Global Variables to define default `index` and `source` field values. Change in one location instead of every pipeline!
+* Rewrites pipeline logic to separate parser reserialize function into separate parser extract and serialize functions
+* New feature: set the global variable `pan_device_name_as_host` to use set the `host` field value from the `dvc_host` field value instead of the syslog header.
+
 ### Version 1.0.0 - 2022-03-22
 * Update to version 1.0.0 - major release for new Pack Dispensary 🎉
 * Changes Pack ID from `PAN` to `cribl-palo-alto-networks` to match naming convention of Cribl built Packs.

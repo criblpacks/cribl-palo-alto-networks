@@ -16,7 +16,7 @@ jobs:
         uses: rlespinasse/github-slug-action@3.5.1
 
       - name: Pack it up!
-        run: tar -czf /tmp/${{ github.event.repository.name }}-${{ env.GITHUB_SHA_SHORT }}-${{ env.GITHUB_REF_SLUG_CS }}.crbl .
+        run: tar -czf /tmp/${{ github.event.repository.name }}-${{ env.GITHUB_SHA_SHORT }}-${{ env.GITHUB_REF_SLUG_CS }}.crbl data default LICENSE package.json README.md
 
       - name: Release
         if: ${{ success() }}
