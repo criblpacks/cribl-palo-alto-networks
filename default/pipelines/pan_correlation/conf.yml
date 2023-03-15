@@ -64,7 +64,8 @@ functions:
         - content_threat_type
         - future_use2
         - generated_time
-        - source_address_source_user
+        - source_address
+        - source_user
         - virtual_system
         - category
         - severity
@@ -160,7 +161,8 @@ functions:
         - content_threat_type
         - future_use2
         - generated_time
-        - source_address_source_user
+        - source_address
+        - source_user
         - virtual_system
         - category
         - severity
