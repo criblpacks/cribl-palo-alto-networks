@@ -33,6 +33,9 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 1.1.1 - 2023-03-14
+* Fixes typo in Correlation pipeline
+
 ### Version 1.1.0 - 2022-04-12
 * Fixes incorrect sourcetype set in Decryption pipeline
 * Add explanations why fields are dropped
