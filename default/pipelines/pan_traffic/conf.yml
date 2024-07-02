@@ -438,7 +438,7 @@ functions:
         - session_owner
         - high_res_timestamp
         - nsdsai_sst
-        - nsdsadi_sd
+        - nsdsai_sd
         - app_subcategory
         - app_category
         - app_technology
