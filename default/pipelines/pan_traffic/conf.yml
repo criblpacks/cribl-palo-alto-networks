@@ -407,7 +407,7 @@ functions:
         - link_switches
         - sdwan_cluster
         - sdwan_device_type
-        - sdwant_cluster_type
+        - sdwan_cluster_type
         - sdwan_site
         - dynusergroup_name
         - xff_ip
@@ -437,8 +437,8 @@ functions:
         - dest_dag
         - session_owner
         - high_res_timestamp
-        - nsdsadi_sst
-        - nsdsadi_sd
+        - nsdsai_sst
+        - nsdsai_sd
         - app_subcategory
         - app_category
         - app_technology
