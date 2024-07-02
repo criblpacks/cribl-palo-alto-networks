@@ -33,6 +33,9 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 1.1.3 - 2024-07-02
+* Fix various typos in pipelines.
+
 ### Version 1.1.2 - 2023-09-21
 * Fix issue with time zone function in Correlation pipeline
 
