@@ -255,8 +255,6 @@ functions:
       remove:
         - receive_time
         - generated_time
-        - src_location
-        - dest_location
         - future_use*
         - sequence_number
         - sctp_*

@@ -33,6 +33,9 @@ FW-.*,Etc/GMT+1
 
 ## Release Notes
 ---
+### Version 1.1.4 - 2024-07-02
+* In pan_threat pipeline, remove two fields from list of fields to be dropped, "src_location" & "dest_location"
+
 ### Version 1.1.3 - 2024-07-02
 * Fix various typos in pipelines.
 
