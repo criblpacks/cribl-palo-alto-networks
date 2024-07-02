@@ -437,7 +437,7 @@ functions:
         - dest_dag
         - session_owner
         - high_res_timestamp
-        - nsdsadi_sst
+        - nsdsai_sst
         - nsdsadi_sd
         - app_subcategory
         - app_category
