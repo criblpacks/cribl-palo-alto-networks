@@ -19,17 +19,53 @@ You should expect to see 15-30% reduction in the size of your Palo Alto Firewall
 4. Configure the Global Variable (`pan_default_index`) inside the Pack with the appropriate Splunk index for your Palo Alto logs. By default, the index field will be set to `pan_logs`.
 
 ### Configure Device Information
-This pack assumes all of your firewalls use UTC/GMT for their time zone configuration. If you use local time zones, please configure the `device_info.csv` lookup file (located in the pack's Knowledge content).
+This pack assumes firewalls currently use UTC/GMT for their time zone configuration. If any device uses a local time zone, please configure an entry in the `device_info.csv` lookup file (located in the pack's Knowledge content) to adjust timestamps with the timezone of the firewall. The timezone acts as the offset to adjust the timestamp of the event to UTC with the [Auto Timestamp function](https://docs.cribl.io/stream/auto-timestamp-function/).
 
-The `device_info.csv` file uses a regular expression lookup function in each pipeline. You can use wildcards (e.g. `.*`, `KCMO-FW-\d+`, `FW-.*`) in the hostname field. The time zone (`tz`) field must be formatted as an integer (e.g. -05, +11, etc.). The regex lookup will return the most specific regex as the time zone value.
+The lookup file expects data in two columns: `host` and `tz`.
 
-Here is an example lookup file:
+#### Host
+
+The `host` field accepts a regular expression to match the hostname of the firewall. The most specific regex in the lookup will be used to match the timezone.
+
+Consider an example with the following hostnames using a standard naming convention. The format follows this pattern:
+* Static `FW` string
+* ISO 3166-1 alpha-2 country code
+* Optional State or Province code
+* City or IATA airport code
+* Device identifier
+
+Here are some example hostnames:
+* `FW-US-MO-KC-01`
+* `FW-US-MO-KC-02`
+* `FW-US-MO-STL-01`
+* `FW-US-TX-DFW-01`
+* `FW-US-TX-AUS-01`
+* `FW-US-TX-ELP-01`
+* `FW-UK-LON-01`
+* `FW-JP-HND-01`
+
+The first 5 examples are in the US Central time zone. El Paso, Texas (ELP) observes Mountain Time. The final two examples are London and Tokyo, in the Europe/London and Asia/Tokyo time zones, respectively.
+
+A regex of `FW-\d+` would match all firewalls, and a specific regex of `FW-US-MO-KC-\d+` would only match the firewalls in the Kansas City data center. Matches for `FW-US-MO-KC\d+` will take higher precedence over the `FW-\d+` regex. This functionality can be used to match specific firewalls or groups of firewalls and provide a timezone for each with increasing precedence. More information about this behavior is provided on the [Cribl Documentation Lookup Function page](https://docs.cribl.io/stream/lookup-function/#usage).
+
+#### Timezone Configuration
+
+Time zones are configured using Olson formatted timezones (e.g. `America/Chicago`) [`C.Time.adjustTZ`](https://docs.cribl.io/logstream/cribl-reference/#time). A listing of time zones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
+
+Cribl uses a third-party library, [`timezone-support`](https://www.npmjs.com/package/timezone-support), to import timezone definitions. As of the time of writing, Cribl uses [version 2.0.2](https://github.com/prantlf/timezone-support/releases/tag/v2.0.2) of this package which supports all time zones up to the 2019a release of the IANA Time Zone Database, but may include more up-to-date entries. Please verify before using a specific timezone. All changes to the timezone database since 2016 can be found [here](https://tzdata-meta.timtimeonline.com/).
+
+#### Example Lookup File
+
+Here is an example lookup file based on the scenario above utilizing increasing regex specificity for timezone matching:
 ```
 host,tz
-KCMO-FW-\d+,America/Chicago
-FW-.*,Etc/GMT+1
-.*,US/Eastern
+FW-US-.*,America/Chicago
+FW-US-TX-ELP-.*,America/Denver
+FW-JP-.*,Asia/Tokyo
+FW-UK-.*,Europe/London
 ```
+
+Firewalls not matching any entry in this list would be assumed to currently have timestamps in UTC.
 
 ## Release Notes
 ---
