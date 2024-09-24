@@ -412,6 +412,7 @@ functions:
         - dynusergroup_name
         - xff_ip
         - src_dvc_category
+        - src_dvc_profile
         - src_dvc_model
         - src_dvc_vendor
         - src_dvc_os_family
