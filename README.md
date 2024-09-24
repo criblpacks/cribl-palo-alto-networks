@@ -69,6 +69,9 @@ Firewalls not matching any entry in this list would be assumed to currently have
 
 ## Release Notes
 ---
+### Version 1.1.5 - 2024-09-24
+* In pan_traffic pipeline, add missing `src_dvc_profile` field to the serializer function
+
 ### Version 1.1.4 - 2024-07-02
 * In pan_threat pipeline, remove two fields from list of fields to be dropped, "src_location" & "dest_location"
 
